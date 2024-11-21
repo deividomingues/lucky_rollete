@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de cadastro</title>
+    <link rel="stylesheet" href="cadastro.css">
+</head>
+<body>
+    <div class="conteiner">
+        <form id="registerForm" action="/auth/register" method="POST">
+            <h1>Cadastro</h1>
+            <div> 
+                <input placeholder="Nome" type="text" name="nome" required>
+                <img width="20" height="20" src="https://img.icons8.com/fluency-systems-regular/48/user--v1.png" alt="user--v1"/>
+            </div>
+
+            <div> 
+                <input placeholder="Email" type="email" name="email" required>
+                <img width="20" height="20" src="https://img.icons8.com/fluency-systems-regular/48/user--v1.png" alt="user--v1"/>
+            </div>
+
+            <div> 
+                <input placeholder="Senha" type="password" name="senha" required>
+                <img width="20" height="20" src="https://img.icons8.com/material-outlined/24/lock-2.png" alt="lock-2"/>
+            </div>
+
+            <button type="submit">Cadastrar</button>
+            <div>
+                <p>Já tem cadastro? <a href="login.html">Login</a></p>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            console.log(data);
+            const response = await fetch("/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.text();
+            if (result.auth) {
+                localStorage.setItem('token', result.token); 
+                alert("Cadastro bem-sucedido!");
+                window.location.href = "/login.html"; 
+            } else {
+             alert(result);
+            }
+        });
+
+
+
+    </script>
+</body>
+</html>
