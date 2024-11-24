@@ -1,4 +1,3 @@
-// routes/user.js
 require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcryptjs');
@@ -6,9 +5,6 @@ const jwt = require('jsonwebtoken');
 const db = require('../db');
 const router = express.Router();
 
-
-
-// Middleware para verificar o token de autenticação
 function verifyToken(req, res, next) {
   const token = req.headers['x-access-token'];
   if (!token) {
@@ -25,7 +21,28 @@ function verifyToken(req, res, next) {
       req.userId = decoded.id;
       next();
   });
+  
 }
+router.post('/atualizarSaldo', verifyToken, (req, res) => {
+    const { saldo } = req.body;
+    const usuarioId = req.userId;
+
+    if (saldo < 0) {
+        return res.status(400).json({ error: 'Saldo não pode ser negativo.' });
+    }
+
+    const atualizarSaldo = `UPDATE usuarios SET saldo = ? WHERE id = ?`;
+
+    db.query(atualizarSaldo, [saldo, usuarioId], (err) => {
+        if (err) {
+            console.error('Erro ao atualizar saldo no backend:', err.message);
+            return res.status(500).json({ error: 'Erro ao atualizar saldo no banco de dados.' });
+        }
+
+        res.status(200).json({ message: 'Saldo atualizado com sucesso.' });
+    });
+});
+
 
 router.post('/login', (req, res) => {
   const { email, senha } = req.body;
@@ -50,7 +67,6 @@ router.post('/login', (req, res) => {
   });
 });
 
-// Rota para obter informações do usuário, protegida por `verifyToken`
 router.get('/info', verifyToken, (req, res) => {
   const userId = req.userId;
 
@@ -61,7 +77,7 @@ router.get('/info', verifyToken, (req, res) => {
       }
 
       if (results.length > 0) {
-          // Retorna o saldo ou 0 como fallback
+       
           const { nome, saldo = 0 } = results[0];
           res.status(200).json({ nome, saldo });
       } else {
@@ -70,7 +86,7 @@ router.get('/info', verifyToken, (req, res) => {
   });
 });
 
-// Rota: Obter histórico de transações
+
 router.get('/historico', verifyToken, (req, res) => {
   const usuarioId = req.userId;
 
@@ -91,7 +107,7 @@ router.get('/historico', verifyToken, (req, res) => {
   });
 });
 
-// Rota: Depósito
+
 router.post('/deposito', verifyToken, (req, res) => {
   const { valor } = req.body;
   const usuarioId = req.userId;
@@ -134,7 +150,6 @@ router.post('/deposito', verifyToken, (req, res) => {
   });
 });
 
-// Rota: Saque
 router.post('/saque', verifyToken, (req, res) => {
   const { valor } = req.body;
   const usuarioId = req.userId;

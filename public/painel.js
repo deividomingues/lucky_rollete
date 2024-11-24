@@ -1,4 +1,3 @@
-// Alterna entre as seções
 function showSection(sectionId) {
   const sections = document.querySelectorAll(".section");
   sections.forEach(section => {
@@ -6,18 +5,14 @@ function showSection(sectionId) {
   });
 }
 
-
-// Token do usuário para autenticação
 document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('token');
-    console.log('Token obtido do localStorage:', token);
+    const token = sessionStorage.getItem('token');
+    console.log('Token obtido do sessionStorage:', token);
 });
 
-
-// Função para carregar informações do usuário (nome e saldo)
 async function carregarInfoUsuario() {
     try {
-        const token = localStorage.getItem('token');  // Pegando o token armazenado
+        const token = lsessionStorage.getItem('token'); 
 
         if (!token) {
             throw new Error('Token não encontrado. Faça login novamente.');
@@ -25,7 +20,7 @@ async function carregarInfoUsuario() {
 
         const response = await fetch('/user/info', {
             method: 'GET',
-            headers: { 'x-access-token': token }  // Enviando o token no cabeçalho
+            headers: { 'x-access-token': token }  
         });
 
         if (!response.ok) {
@@ -35,10 +30,10 @@ async function carregarInfoUsuario() {
         const data = await response.json();
         document.getElementById('usuarioNome').textContent = `Bem-vindo, ${data.nome}`;
         
-        // Atualiza o saldo no DOM e no localStorage
+        
         const saldo = parseFloat(data.saldo);
         if (!isNaN(saldo)) {
-            localStorage.setItem('saldo', saldo);
+            sessionStorage.setItem('saldo', saldo);
             document.getElementById('saldo').querySelector('span').textContent = saldo.toFixed(2);
         } else {
             throw new Error('Erro ao carregar saldo do usuário.');
@@ -51,24 +46,22 @@ async function carregarInfoUsuario() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    carregarSaldo(); // Inicializa o saldo ao carregar a página
-    carregarHistoricoTransacoes(); // Inicializa o histórico de transações
+    carregarSaldo(); 
+    carregarHistoricoTransacoes(); 
 });
 
-// Atualiza o saldo no frontend e localStorage
 function atualizarSaldo(novoSaldo) {
-    novoSaldo = parseFloat(novoSaldo) || 0; // Garante que será um número válido
-    localStorage.setItem('saldo', novoSaldo.toFixed(2));
+    novoSaldo = parseFloat(novoSaldo) || 0; 
+    sessionStorage.setItem('saldo', novoSaldo.toFixed(2));
     document.querySelector('#saldo span').textContent = novoSaldo.toFixed(2);
 }
 
-// Carrega o saldo do localStorage
 async function carregarSaldo() {
     try {
         const response = await fetch('/user/info', {
             headers: {
                 'Content-Type': 'application/json',
-                'x-access-token': localStorage.getItem('token') // Envia o token para autenticação
+                'x-access-token': sessionStorage.getItem('token') 
             }
         });
 
@@ -78,29 +71,27 @@ async function carregarSaldo() {
         }
 
         const result = await response.json();
-        const saldo = result.saldo ?? 0; // Garante que saldo será 0 se for null ou undefined
-        atualizarSaldo(saldo); // Atualiza o saldo no frontend
+        const saldo = result.saldo ?? 0; 
+        atualizarSaldo(saldo); 
     } catch (error) {
         console.error("Erro ao carregar saldo:", error.message);
         alert(error.message);
     }
 }
 
-// Função para adicionar uma transação ao histórico
 function registrarTransacao(tipo, valor) {
-    const historico = JSON.parse(localStorage.getItem('historico_transacoes')) || [];
+    const historico = JSON.parse(sessionStorage.getItem('historico_transacoes')) || [];
     historico.push({
         data: new Date().toLocaleString(),
         tipo: tipo,
         valor: parseFloat(valor).toFixed(2),
     });
-    localStorage.setItem('historico_transacoes', JSON.stringify(historico));
+    sessionStorage.setItem('historico_transacoes', JSON.stringify(historico));
     carregarHistoricoTransacoes();
 }
 
-// Exibe o histórico de transações na tabela
 function carregarHistoricoTransacoes() {
-    const historico = JSON.parse(localStorage.getItem('historico_transacoes')) || [];
+    const historico = JSON.parse(sessionStorage.getItem('historico_transacoes')) || [];
     const corpoTabela = document.getElementById('transacoesCorpo');
     corpoTabela.innerHTML = '';
 
@@ -115,7 +106,6 @@ function carregarHistoricoTransacoes() {
     });
 }
 
-// Função para depósito
 document.getElementById('depositoForm').addEventListener('submit', (event) => {
     event.preventDefault();
     const valor = parseFloat(event.target.valor.value);
@@ -125,16 +115,15 @@ document.getElementById('depositoForm').addEventListener('submit', (event) => {
         return;
     }
 
-    const saldoAtual = parseFloat(localStorage.getItem('saldo')) || 0;
+    const saldoAtual = parseFloat(sessionStorage.getItem('saldo')) || 0;
     const novoSaldo = saldoAtual + valor;
 
     atualizarSaldo(novoSaldo);
     registrarTransacao('Depósito', valor);
     alert('Depósito realizado com sucesso!');
-    event.target.reset(); // Limpa o formulário
+    event.target.reset(); 
 });
 
-// Função para saque
 document.getElementById('saqueForm').addEventListener('submit', (event) => {
     event.preventDefault();
     const valor = parseFloat(event.target.valor.value);
@@ -144,7 +133,7 @@ document.getElementById('saqueForm').addEventListener('submit', (event) => {
         return;
     }
 
-    const saldoAtual = parseFloat(localStorage.getItem('saldo')) || 0;
+    const saldoAtual = parseFloat(sessionStorage.getItem('saldo')) || 0;
 
     if (saldoAtual < valor) {
         alert('Saldo insuficiente para realizar o saque.');
@@ -156,39 +145,52 @@ document.getElementById('saqueForm').addEventListener('submit', (event) => {
     atualizarSaldo(novoSaldo);
     registrarTransacao('Saque', valor);
     alert('Saque realizado com sucesso!');
-    event.target.reset(); // Limpa o formulário
+    event.target.reset(); 
 });
 
 
 
-
-// Inicializa o saldo e carrega do Local Storage ou define como 100 por padrão
-let saldo = parseFloat(localStorage.getItem('saldo')) || 100;
+let saldo = parseFloat(sessionStorage.getItem('saldo')) || 0;
 document.getElementById('saldo').querySelector('span').textContent = saldo.toFixed(2);
 
-// Função para atualizar o saldo no Local Storage e no DOM
 function atualizarSaldoUsuario(novoSaldo) {
-    saldo = novoSaldo;
-    localStorage.setItem('saldo', saldo);
+    saldo = parseFloat(novoSaldo) || 0;
+
+    // Atualiza o saldo no sessionStorage e na página
+    sessionStorage.setItem('saldo', saldo.toFixed(2));
     document.getElementById('saldo').querySelector('span').textContent = saldo.toFixed(2);
+
+    // Atualiza o saldo no backend
+    fetch('/user/atualizarSaldo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': sessionStorage.getItem('token')
+        },
+        body: JSON.stringify({ saldo })
+    }).then(response => {
+        if (!response.ok) {
+            console.error('Erro ao sincronizar saldo com o servidor.');
+        }
+    }).catch(error => {
+        console.error('Erro ao atualizar saldo no backend:', error);
+    });
 }
 
-// Função para registrar a jogada no histórico e salvar no Local Storage
 function registrarJogadaLocal(tipo, premiacao, resultado) {
-    const jogadas = JSON.parse(localStorage.getItem('historico_jogadas')) || [];
+    const jogadas = JSON.parse(sessionStorage.getItem('historico_jogadas')) || [];
     jogadas.push({
         data: new Date().toLocaleDateString(),
         tipo,
         premiacao,
         resultado
     });
-    localStorage.setItem('historico_jogadas', JSON.stringify(jogadas));
+    sessionStorage.setItem('historico_jogadas', JSON.stringify(jogadas));
     carregarHistoricoJogadasLocal();
 }
 
-// Função para carregar o histórico de jogadas do Local Storage
 function carregarHistoricoJogadasLocal() {
-    const jogadas = JSON.parse(localStorage.getItem('historico_jogadas')) || [];
+    const jogadas = JSON.parse(sessionStorage.getItem('historico_jogadas')) || [];
     const jogadasCorpo = document.getElementById('jogadasCorpo');
     jogadasCorpo.innerHTML = '';
 
@@ -204,14 +206,14 @@ function carregarHistoricoJogadasLocal() {
     });
 }
 
-// Função para registrar a jogada ao girar a roleta
+
 async function girarRoleta(tipo) {
     if (saldo < 5) {
         alert('Saldo insuficiente para girar a roleta.');
         return;
     }
 
-    atualizarSaldoUsuario(saldo - 5); // Debita R$5 do saldo para cada jogada
+    atualizarSaldoUsuario(saldo - 5); 
 
     const wheel = document.getElementById("wheel");
     const resultDisplay = document.getElementById("resultado");
@@ -235,7 +237,7 @@ async function girarRoleta(tipo) {
 
         if (resultado === "Ganhou") {
             const valorPremio = parseFloat(premiacao.replace("R$", ""));
-            atualizarSaldoUsuario(saldo + valorPremio); // Adiciona o valor do prêmio ao saldo
+            atualizarSaldoUsuario(saldo + valorPremio); 
         }
 
         registrarJogadaLocal(tipo, premiacao, resultado);
@@ -245,7 +247,7 @@ async function girarRoleta(tipo) {
     }, 4000);
 }
 
-// Botões para girar a roleta
+
 document.getElementById('girarUmaVez').addEventListener('click', () => girarRoleta('x1'));
 document.getElementById('girarCincoVezes').addEventListener('click', async () => {
     for (let i = 0; i < 5; i++) {
@@ -253,7 +255,7 @@ document.getElementById('girarCincoVezes').addEventListener('click', async () =>
     }
 });
 
-// Carrega o histórico de jogadas ao carregar a página
+
 document.addEventListener("DOMContentLoaded", () => {
     carregarHistoricoJogadasLocal();
 });

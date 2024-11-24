@@ -1,4 +1,3 @@
-// Mock implementation of localStorage for Node.js
 const mockLocalStorage = (() => {
     let store = {};
 
@@ -18,7 +17,6 @@ const mockLocalStorage = (() => {
     };
 })();
 
-// Initialize global localStorage for Node.js
 function inicializarLocalStorage() {
     global.localStorage = {
         store: {},
@@ -37,18 +35,15 @@ function inicializarLocalStorage() {
     };
 }
 
-// Utility: Retrieve and parse JSON data from localStorage
 function getParsedItem(key, defaultValue = null) {
     const value = mockLocalStorage.getItem(key);
     return value ? JSON.parse(value) : defaultValue;
 }
 
-// Utility: Save data as JSON in localStorage
 function setParsedItem(key, value) {
     mockLocalStorage.setItem(key, JSON.stringify(value));
 }
 
-// Update user's balance
 function atualizarSaldoUsuario(novoSaldo) {
     if (typeof novoSaldo !== 'number' || novoSaldo < 0) {
         throw new Error("Saldo inválido. Deve ser um número positivo.");
@@ -56,7 +51,6 @@ function atualizarSaldoUsuario(novoSaldo) {
     mockLocalStorage.setItem('saldo', novoSaldo);
 }
 
-// Register a game play in the history
 function registrarJogadaLocal(tipo, premiacao, resultado) {
     const jogadas = getParsedItem('historico_jogadas', []);
     jogadas.push({
@@ -92,7 +86,6 @@ function carregarInfoUsuario() {
     }
 }
 
-// Function: girarRoleta
 function girarRoleta(tipo) {
     if (typeof document === 'undefined') {
         throw new Error("girarRoleta requires a DOM environment.");
@@ -125,9 +118,6 @@ function girarRoleta(tipo) {
     registrarJogadaLocal(tipo, resultado === "Ganhou" ? "R$10" : "R$0", resultado);
 }
 
-
-
-// Export all functions
 module.exports = {
     mockLocalStorage,
     inicializarLocalStorage,

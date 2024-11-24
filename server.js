@@ -10,8 +10,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-app.use('/auth', authRoutes);  // Rotas de autenticação começam com /auth
-app.use('/user', userRoutes);  // Rotas de usuários começam com /user
+app.use('/auth', authRoutes);  
+app.use('/user', userRoutes);  
 
 app.listen(3000, () => {
   console.log('Servidor rodando em http://localhost:3000');

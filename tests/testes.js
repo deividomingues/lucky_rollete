@@ -1,4 +1,3 @@
-// Import necessary functions from painelFunctions
 const { 
   atualizarSaldoUsuario, 
   registrarJogadaLocal, 
@@ -10,10 +9,8 @@ const {
 
 const { JSDOM } = require('jsdom');
 
-// Initialize mock localStorage
 inicializarLocalStorage();
 
-// Set up a mock DOM environment
 function setupMockDOM() {
   const dom = new JSDOM(`
       <!DOCTYPE html>
@@ -30,13 +27,11 @@ function setupMockDOM() {
   global.window = dom.window;
 }
 
-// Helper function to reset localStorage and DOM
 function resetTestEnvironment() {
   mockLocalStorage.clear();
   setupMockDOM();
 }
 
-// Test runner
 function runTest(name, testFn) {
   try {
       resetTestEnvironment();
@@ -47,7 +42,6 @@ function runTest(name, testFn) {
   }
 }
 
-// Test Cases
 function testAtualizarSaldoUsuario() {
   atualizarSaldoUsuario(150);
   const saldo = parseFloat(mockLocalStorage.getItem("saldo"));
@@ -120,7 +114,6 @@ function testGirarRoleta() {
   }
 }
 
-// Run all tests
 runTest("Atualizar Saldo do Usuário", testAtualizarSaldoUsuario);
 runTest("Registrar Jogada Local", testRegistrarJogadaLocal);
 runTest("Saldo Inicial", testSaldoInicial);
