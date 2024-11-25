@@ -44,8 +44,6 @@ router.post('/atualizarSaldo', verifyToken, (req, res) => {
 });
 
 
-const jwt = require('jsonwebtoken');
-
 router.post('/login', (req, res) => {
     const { email, senha } = req.body;
 
