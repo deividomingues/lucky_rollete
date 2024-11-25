@@ -120,7 +120,7 @@ document.getElementById('depositoForm').addEventListener('submit', (event) => {
 
     atualizarSaldo(novoSaldo);
     registrarTransacao('Depósito', valor);
-    alert('Depósito realizado com sucesso!, Reinicie a pagina para confirmar seu deposito');
+    alert('Depósito realizado com sucesso! Reinicie a pagina para confirmar seu deposito');
     event.target.reset(); 
 });
 
@@ -144,7 +144,7 @@ document.getElementById('saqueForm').addEventListener('submit', (event) => {
 
     atualizarSaldo(novoSaldo);
     registrarTransacao('Saque', valor);
-    alert('Saque realizado com sucesso!');
+    alert('Saque realizado com sucesso! Reinicie a pagina para confirmar seu deposito');
     event.target.reset(); 
 });
 
