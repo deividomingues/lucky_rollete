@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function carregarInfoUsuario() {
     try {
-        const token = lsessionStorage.getItem('token'); 
+        const token = sessionStorage.getItem('token'); 
 
         if (!token) {
             throw new Error('Token não encontrado. Faça login novamente.');
@@ -120,7 +120,7 @@ document.getElementById('depositoForm').addEventListener('submit', (event) => {
 
     atualizarSaldo(novoSaldo);
     registrarTransacao('Depósito', valor);
-    alert('Depósito realizado com sucesso!');
+    alert('Depósito realizado com sucesso!, Reinicie a pagina para confirmar seu deposito');
     event.target.reset(); 
 });
 
@@ -156,18 +156,18 @@ document.getElementById('saldo').querySelector('span').textContent = saldo.toFix
 function atualizarSaldoUsuario(novoSaldo) {
     saldo = parseFloat(novoSaldo) || 0;
 
-    // Atualiza o saldo no sessionStorage e na página
+
     sessionStorage.setItem('saldo', saldo.toFixed(2));
     document.getElementById('saldo').querySelector('span').textContent = saldo.toFixed(2);
 
-    // Atualiza o saldo no backend
+    
     fetch('/user/atualizarSaldo', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'x-access-token': sessionStorage.getItem('token')
         },
-        body: JSON.stringify({ saldo })
+        body: JSON.stringify({ saldo: novoSaldo  })
     }).then(response => {
         if (!response.ok) {
             console.error('Erro ao sincronizar saldo com o servidor.');

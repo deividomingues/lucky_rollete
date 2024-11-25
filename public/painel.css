@@ -171,16 +171,20 @@ table tbody tr:nth-child(even) {
     left: 50%;
     transform-origin: 0% 0%;
     text-align: center;
-    line-height: 150px;
+    line-height: 100px; 
     color: #ffffff;
     font-size: 16px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; 
     align-items: center;
+    padding-left: 10px; 
 }
 
 .slice span {
-    transform: rotate(-30deg);
+    transform: rotate(-60deg); 
+    display: inline-block;
+    margin-top: 60px; 
+    margin-left: 18px;
 }
 
 .premio1 { background-color: #FF6347; transform: rotate(0deg) skewY(-30deg) translateY(-100%); }

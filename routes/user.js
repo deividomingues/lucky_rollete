@@ -44,27 +44,30 @@ router.post('/atualizarSaldo', verifyToken, (req, res) => {
 });
 
 
+const jwt = require('jsonwebtoken');
+
 router.post('/login', (req, res) => {
-  const { email, senha } = req.body;
+    const { email, senha } = req.body;
 
-  db.query('SELECT * FROM usuarios WHERE email = ?', [email], (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: 'Erro no servidor.' });
-    }
+    db.query('SELECT * FROM usuarios WHERE email = ?', [email], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: 'Erro no servidor.' });
+        }
 
-    if (results.length === 0) {
-      return res.status(404).json({ error: 'Usuário não encontrado.' });
-    }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Usuário não encontrado.' });
+        }
 
-    const usuario = results[0];
-    const senhaValida = bcrypt.compareSync(senha, usuario.senha);
-    if (!senhaValida) {
-      return res.status(401).json({ error: 'Senha incorreta.' });
-    }
+        const usuario = results[0];
+        const senhaValida = bcrypt.compareSync(senha, usuario.senha);
+        if (!senhaValida) {
+            return res.status(401).json({ error: 'Senha incorreta.' });
+        }
 
-    const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, { expiresIn: '1h' });
-    res.status(200).json({ auth: true, token, nome: usuario.nome });
-  });
+        const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        
+        res.status(200).json({ auth: true, token, nome: usuario.nome });
+    });
 });
 
 router.get('/info', verifyToken, (req, res) => {
